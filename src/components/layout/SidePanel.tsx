@@ -46,11 +46,11 @@ export const SidePanel: React.FC = () => {
       <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
-            {state.currentUser?.name?.charAt(0) || 'JA'}
+            {state.currentUser?.name?.charAt(0) || 'M'}
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle1" fontWeight="bold">
-              {state.currentUser?.name || 'John Agent'}
+              {state.currentUser?.name || 'Manish'}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box sx={{ 

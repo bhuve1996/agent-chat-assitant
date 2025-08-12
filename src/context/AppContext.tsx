@@ -7,7 +7,6 @@ interface AppState {
   selectedChatId: string | null;
   chats: Chat[];
   messages: Record<string, Message[]>;
-  activeTab: number;
   activeNavigation: string; // 'ai-assistant' | 'whatsapp' | 'phone' | 'incoming' | 'active-call'
 }
 
@@ -16,7 +15,6 @@ type AppAction =
   | { type: 'SET_CURRENT_USER'; payload: User }
   | { type: 'SELECT_CHAT'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: { chatId: string; message: Message } }
-  | { type: 'SET_ACTIVE_TAB'; payload: number }
   | { type: 'SET_ACTIVE_NAVIGATION'; payload: string }
   | { type: 'ADD_CHAT'; payload: Chat }
   | { type: 'UPDATE_CHAT'; payload: Chat };
@@ -25,8 +23,8 @@ type AppAction =
 const initialState: AppState = {
   currentUser: {
     id: 'current',
-    name: 'John Agent',
-    email: 'john@ey.com',
+    name: 'Manish',
+    email: 'manish@ey.com',
   },
   selectedChatId: null,
   chats: [
@@ -71,7 +69,6 @@ const initialState: AppState = {
     }
   ],
   messages: {},
-  activeTab: 1,
   activeNavigation: 'ai-assistant'
 };
 
@@ -108,9 +105,6 @@ function appReducer(state: AppState, action: AppAction): AppState {
         messages: updatedMessages,
         chats: updatedChats
       };
-    
-    case 'SET_ACTIVE_TAB':
-      return { ...state, activeTab: action.payload };
     
     case 'SET_ACTIVE_NAVIGATION':
       return { ...state, activeNavigation: action.payload };

@@ -32,7 +32,7 @@ interface ActiveCallInfo {
 }
 
 const mockActiveCall: ActiveCallInfo = {
-  customerName: 'Sarah Johnson',
+  customerName: 'Manish',
   phoneNumber: '+1-555-0401',
   callType: 'voice',
   startTime: new Date(Date.now() - 5 * 60 * 1000), // Started 5 minutes ago
