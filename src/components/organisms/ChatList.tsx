@@ -6,7 +6,7 @@ import { getLastMessagePreview, getUnreadMessageCount } from '../../helpers';
 interface ChatListProps {
   chats: Chat[];
   onChatSelect: (chat: Chat) => void;
-  selectedChatId?: string;
+  selectedChatId?: string | null;
 }
 
 export const ChatList: React.FC<ChatListProps> = ({ 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Box, 
   Typography, 
@@ -6,6 +6,7 @@ import {
   Tab
 } from '@mui/material';
 import { ChatList } from '../organisms/ChatList';
+import { useAppContext } from '../../context/AppContext';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -30,36 +31,31 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const ChatListPanel: React.FC = () => {
-  const [tabValue, setTabValue] = useState(0);
+  const { state, dispatch } = useAppContext();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+    dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue });
   };
 
-  // Mock chat data
-  const mockChats = [
-    {
-      id: '1',
-      participants: [{ id: 'user1', name: 'Customer Support', email: 'support@example.com' }],
-      messages: [],
-      lastMessage: { id: '1', content: 'How can I help you today?', sender: { id: 'user1', name: 'Support', email: '' }, timestamp: new Date(), type: 'text' as const },
-      unreadCount: 2
-    },
-    {
-      id: '2',
-      participants: [{ id: 'user2', name: 'Sales Team', email: 'sales@example.com' }],
-      messages: [],
-      lastMessage: { id: '2', content: 'Thank you for your inquiry', sender: { id: 'user2', name: 'Sales', email: '' }, timestamp: new Date(), type: 'text' as const },
-      unreadCount: 0
-    },
-    {
-      id: '3',
-      participants: [{ id: 'user3', name: 'Technical Support', email: 'tech@example.com' }],
-      messages: [],
-      lastMessage: { id: '3', content: 'Issue has been resolved', sender: { id: 'user3', name: 'Tech', email: '' }, timestamp: new Date(), type: 'text' as const },
-      unreadCount: 1
+  const handleChatSelect = (chat: any) => {
+    dispatch({ type: 'SELECT_CHAT', payload: chat.id });
+  };
+
+  // Filter chats based on active tab
+  const getFilteredChats = () => {
+    switch (state.activeTab) {
+      case 0: // Unread
+        return state.chats.filter(chat => chat.unreadCount > 0);
+      case 1: // All chats
+        return state.chats;
+      case 2: // Meeting chats
+        return state.chats.filter(chat => chat.participants.length > 2);
+      default:
+        return state.chats;
     }
-  ];
+  };
+
+  const filteredChats = getFilteredChats();
 
   return (
     <Box sx={{ 
@@ -78,7 +74,7 @@ export const ChatListPanel: React.FC = () => {
 
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tabValue} onChange={handleTabChange} aria-label="chat tabs">
+        <Tabs value={state.activeTab} onChange={handleTabChange} aria-label="chat tabs">
           <Tab label="Unread" />
           <Tab label="Chats" />
           <Tab label="Meeting chats" />
@@ -87,24 +83,40 @@ export const ChatListPanel: React.FC = () => {
 
       {/* Tab Panels */}
       <Box sx={{ flex: 1, overflow: 'auto' }}>
-        <TabPanel value={tabValue} index={0}>
-          <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
-            No unread messages
-          </Typography>
+        <TabPanel value={state.activeTab} index={0}>
+          {filteredChats.length > 0 ? (
+            <ChatList 
+              chats={filteredChats} 
+              onChatSelect={handleChatSelect}
+              selectedChatId={state.selectedChatId}
+            />
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
+              No unread messages
+            </Typography>
+          )}
         </TabPanel>
         
-        <TabPanel value={tabValue} index={1}>
+        <TabPanel value={state.activeTab} index={1}>
           <ChatList 
-            chats={mockChats} 
-            onChatSelect={(chat) => console.log('Selected chat:', chat.id)}
-            selectedChatId="1"
+            chats={filteredChats} 
+            onChatSelect={handleChatSelect}
+            selectedChatId={state.selectedChatId}
           />
         </TabPanel>
         
-        <TabPanel value={tabValue} index={2}>
-          <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
-            No meeting chats
-          </Typography>
+        <TabPanel value={state.activeTab} index={2}>
+          {filteredChats.length > 0 ? (
+            <ChatList 
+              chats={filteredChats} 
+              onChatSelect={handleChatSelect}
+              selectedChatId={state.selectedChatId}
+            />
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
+              No meeting chats
+            </Typography>
+          )}
         </TabPanel>
       </Box>
     </Box>

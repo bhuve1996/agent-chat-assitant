@@ -17,8 +17,15 @@ import {
   Call as CallIcon,
   RadioButtonChecked as ActiveIcon
 } from '@mui/icons-material';
+import { useAppContext } from '../../context/AppContext';
 
 export const SidePanel: React.FC = () => {
+  const { state } = useAppContext();
+
+  const getTotalUnreadCount = () => {
+    return state.chats.reduce((total, chat) => total + chat.unreadCount, 0);
+  };
+
   return (
     <Box sx={{ 
       width: 280, 
@@ -31,11 +38,11 @@ export const SidePanel: React.FC = () => {
       <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
-            JA
+            {state.currentUser?.name?.charAt(0) || 'JA'}
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle1" fontWeight="bold">
-              John Agent
+              {state.currentUser?.name || 'John Agent'}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box sx={{ 
@@ -109,6 +116,13 @@ export const SidePanel: React.FC = () => {
           </ListItemButton>
         </ListItem>
       </List>
+
+      {/* Footer with total unread count */}
+      <Box sx={{ p: 2, borderTop: '1px solid #e0e0e0', backgroundColor: '#e8eaf6' }}>
+        <Typography variant="body2" color="text.secondary" align="center">
+          Total unread messages: {getTotalUnreadCount()}
+        </Typography>
+      </Box>
     </Box>
   );
 }; 

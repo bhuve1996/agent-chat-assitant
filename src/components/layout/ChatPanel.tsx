@@ -14,19 +14,13 @@ import {
   Call as CallIcon
 } from '@mui/icons-material';
 import { MessageBubble } from '../molecules/MessageBubble';
-import { User, Message } from '../../types';
+import { Message } from '../../types';
 import { generateId } from '../../utils';
+import { useAppContext } from '../../context/AppContext';
 
 export const ChatPanel: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-
-  // Mock users
-  const currentUser: User = {
-    id: 'current',
-    name: 'John Agent',
-    email: 'john@ey.com',
-  };
+  const { state, dispatch } = useAppContext();
 
   // Memoize assistant user to fix useEffect dependency warning
   const assistantUser = useMemo(() => ({
@@ -35,30 +29,43 @@ export const ChatPanel: React.FC = () => {
     email: 'ai@ey.com',
   }), []);
 
+  // Get current chat and messages
+  const selectedChat = state.chats.find(chat => chat.id === state.selectedChatId);
+  const currentMessages = state.messages[state.selectedChatId || ''] || [];
+
   useEffect(() => {
-    // Add welcome message
-    const welcomeMessage: Message = {
-      id: generateId(),
-      content: "Hello! I am your AI Virtual Assistant. How can I help you optimize customer interactions today?",
-      sender: assistantUser,
-      timestamp: new Date(),
-      type: 'text',
-    };
-    setMessages([welcomeMessage]);
-  }, [assistantUser]);
+    // Add welcome message if no messages exist for selected chat
+    if (state.selectedChatId && currentMessages.length === 0) {
+      const welcomeMessage: Message = {
+        id: generateId(),
+        content: "Hello! I am your AI Virtual Assistant. How can I help you optimize customer interactions today?",
+        sender: assistantUser,
+        timestamp: new Date(),
+        type: 'text',
+      };
+      
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        payload: { chatId: state.selectedChatId, message: welcomeMessage } 
+      });
+    }
+  }, [state.selectedChatId, currentMessages.length, assistantUser, dispatch]);
 
   const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !state.selectedChatId || !state.currentUser) return;
 
     const userMessage: Message = {
       id: generateId(),
       content: newMessage,
-      sender: currentUser,
+      sender: state.currentUser,
       timestamp: new Date(),
       type: 'text',
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    dispatch({ 
+      type: 'ADD_MESSAGE', 
+      payload: { chatId: state.selectedChatId, message: userMessage } 
+    });
     setNewMessage('');
 
     // Simulate AI response
@@ -70,7 +77,11 @@ export const ChatPanel: React.FC = () => {
         timestamp: new Date(),
         type: 'text',
       };
-      setMessages(prev => [...prev, aiResponse]);
+      
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        payload: { chatId: state.selectedChatId!, message: aiResponse } 
+      });
     }, 1000);
   };
 
@@ -80,6 +91,24 @@ export const ChatPanel: React.FC = () => {
       handleSendMessage();
     }
   };
+
+  // Show placeholder if no chat is selected
+  if (!state.selectedChatId || !selectedChat) {
+    return (
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        backgroundColor: '#fafafa',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Typography variant="h6" color="text.secondary">
+          Select a chat to start messaging
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ 
@@ -103,7 +132,7 @@ export const ChatPanel: React.FC = () => {
           </Avatar>
           <Box>
             <Typography variant="h6" fontWeight="bold">
-              AI Virtual Assistant
+              {selectedChat.participants[0]?.name || 'AI Virtual Assistant'}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               EY-CX Intelligence Online
@@ -136,11 +165,11 @@ export const ChatPanel: React.FC = () => {
         flexDirection: 'column',
         gap: 1
       }}>
-        {messages.map((message) => (
+        {currentMessages.map((message) => (
           <MessageBubble
             key={message.id}
             message={message}
-            isOwnMessage={message.sender.id === currentUser.id}
+            isOwnMessage={message.sender.id === state.currentUser?.id}
           />
         ))}
       </Box>
