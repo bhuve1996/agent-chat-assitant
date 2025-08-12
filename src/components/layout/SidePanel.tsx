@@ -1,12 +1,6 @@
 import React from 'react';
 import { 
   Box, 
-  List, 
-  ListItem, 
-  ListItemButton, 
-  ListItemIcon, 
-  ListItemText, 
-  Avatar, 
   Typography, 
   Badge
 } from '@mui/material';
@@ -19,15 +13,21 @@ import {
 } from '@mui/icons-material';
 import { useAppContext } from '../../context/AppContext';
 
-export const SidePanel: React.FC = () => {
+interface SidePanelProps {
+  onClose?: () => void;
+}
+
+export const SidePanel: React.FC<SidePanelProps> = ({ onClose }) => {
   const { state, dispatch } = useAppContext();
 
-  const getTotalUnreadCount = () => {
-    return state.chats.reduce((total, chat) => total + chat.unreadCount, 0);
-  };
+
 
   const handleNavigationClick = (navigationType: string) => {
     dispatch({ type: 'SET_ACTIVE_NAVIGATION', payload: navigationType });
+    // Close mobile drawer if onClose function is provided
+    if (onClose) {
+      onClose();
+    }
   };
 
   const isActiveNavigation = (navigationType: string) => {
@@ -36,150 +36,199 @@ export const SidePanel: React.FC = () => {
 
   return (
     <Box sx={{ 
-      width: 280, 
+      width: 160, 
+      height: '100vh',
       backgroundColor: '#f5f5f5', 
       borderRight: '1px solid #e0e0e0',
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Agent Profile Section */}
-      <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
-            {state.currentUser?.name?.charAt(0) || 'M'}
-          </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {state.currentUser?.name || 'Manish'}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ 
-                width: 8, 
-                height: 8, 
-                borderRadius: '50%', 
-                backgroundColor: '#4caf50', 
-                mr: 1 
-              }} />
-              <Typography variant="caption" color="text.secondary">
-                Available for EY-CX
-              </Typography>
-            </Box>
-          </Box>
+      
+
+      {/* Navigation Menu */}
+      <Box sx={{ flex: 1, pt: 2, px: 1 }}>
+        {/* AI Virtual Assistant */}
+        <Box 
+          onClick={() => handleNavigationClick('ai-assistant')}
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            px: 1,
+            mb: 1,
+            borderRadius: 2,
+            cursor: 'pointer',
+            backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : 'transparent',
+            '&:hover': { backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : '#f0f0f0' }
+          }}
+        >
+          <RobotIcon 
+            sx={{ 
+              fontSize: 32, 
+              color: isActiveNavigation('ai-assistant') ? '#1976d2' : '#666',
+              mb: 1
+            }} 
+          />
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              textAlign: 'center',
+              fontWeight: isActiveNavigation('ai-assistant') ? 'bold' : 'normal',
+              color: isActiveNavigation('ai-assistant') ? '#1976d2' : '#666'
+            }}
+          >
+            AI Assistant
+          </Typography>
+        </Box>
+
+        {/* WhatsApp Chat Request */}
+        <Box 
+          onClick={() => handleNavigationClick('whatsapp')}
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            px: 1,
+            mb: 1,
+            borderRadius: 2,
+            cursor: 'pointer',
+            backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : 'transparent',
+            '&:hover': { backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : '#f0f0f0' },
+            position: 'relative'
+          }}
+        >
+          <Badge badgeContent={5} color="error" sx={{ mb: 1 }}>
+            <ChatIcon 
+              sx={{ 
+                fontSize: 32, 
+                color: isActiveNavigation('whatsapp') ? '#1976d2' : '#666'
+              }} 
+            />
+          </Badge>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              textAlign: 'center',
+              fontWeight: isActiveNavigation('whatsapp') ? 'bold' : 'normal',
+              color: isActiveNavigation('whatsapp') ? '#1976d2' : '#666'
+            }}
+          >
+            WhatsApp
+          </Typography>
+        </Box>
+
+        {/* Phone Call Request */}
+        <Box 
+          onClick={() => handleNavigationClick('phone')}
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            px: 1,
+            mb: 1,
+            borderRadius: 2,
+            cursor: 'pointer',
+            backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : 'transparent',
+            '&:hover': { backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : '#f0f0f0' },
+            position: 'relative'
+          }}
+        >
+          <Badge badgeContent={3} color="error" sx={{ mb: 1 }}>
+            <PhoneIcon 
+              sx={{ 
+                fontSize: 32, 
+                color: isActiveNavigation('phone') ? '#1976d2' : '#666'
+              }} 
+            />
+          </Badge>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              textAlign: 'center',
+              fontWeight: isActiveNavigation('phone') ? 'bold' : 'normal',
+              color: isActiveNavigation('phone') ? '#1976d2' : '#666'
+            }}
+          >
+            Phone Calls
+          </Typography>
+        </Box>
+
+        {/* Incoming Calls */}
+        <Box 
+          onClick={() => handleNavigationClick('incoming')}
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            px: 1,
+            mb: 1,
+            borderRadius: 2,
+            cursor: 'pointer',
+            backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : 'transparent',
+            '&:hover': { backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : '#f0f0f0' },
+            position: 'relative'
+          }}
+        >
+          <Badge badgeContent={3} color="error" sx={{ mb: 1 }}>
+            <CallIcon 
+              sx={{ 
+                fontSize: 32, 
+                color: isActiveNavigation('incoming') ? '#1976d2' : '#666'
+              }} 
+            />
+          </Badge>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              textAlign: 'center',
+              fontWeight: isActiveNavigation('incoming') ? 'bold' : 'normal',
+              color: isActiveNavigation('incoming') ? '#1976d2' : '#666'
+            }}
+          >
+            Incoming
+          </Typography>
+        </Box>
+
+        {/* Active Call */}
+        <Box 
+          onClick={() => handleNavigationClick('active-call')}
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            px: 1,
+            mb: 1,
+            borderRadius: 2,
+            cursor: 'pointer',
+            backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : 'transparent',
+            '&:hover': { backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : '#f0f0f0' }
+          }}
+        >
+          <ActiveIcon 
+            sx={{ 
+              fontSize: 32, 
+              color: isActiveNavigation('active-call') ? '#1976d2' : '#666',
+              mb: 1
+            }} 
+          />
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              textAlign: 'center',
+              fontWeight: isActiveNavigation('active-call') ? 'bold' : 'normal',
+              color: isActiveNavigation('active-call') ? '#1976d2' : '#666'
+            }}
+          >
+            Active Call
+          </Typography>
         </Box>
       </Box>
 
-      {/* Navigation Menu */}
-      <List sx={{ flex: 1, pt: 1 }}>
-        <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => handleNavigationClick('ai-assistant')}
-            sx={{ 
-              backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : 'transparent',
-              '&:hover': { backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : '#f0f0f0' }
-            }}
-          >
-            <ListItemIcon>
-              <RobotIcon color={isActiveNavigation('ai-assistant') ? 'primary' : 'inherit'} />
-            </ListItemIcon>
-            <ListItemText 
-              primary="AI Virtual Assistant" 
-              primaryTypographyProps={{ 
-                fontWeight: isActiveNavigation('ai-assistant') ? 'bold' : 'normal'
-              }}
-            />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => handleNavigationClick('whatsapp')}
-            sx={{ 
-              backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : 'transparent',
-              '&:hover': { backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : '#f0f0f0' }
-            }}
-          >
-            <ListItemIcon>
-              <ChatIcon color={isActiveNavigation('whatsapp') ? 'primary' : 'inherit'} />
-            </ListItemIcon>
-            <ListItemText 
-              primary="WhatsApp Chat Request" 
-              primaryTypographyProps={{ 
-                fontWeight: isActiveNavigation('whatsapp') ? 'bold' : 'normal'
-              }}
-            />
-            <Badge badgeContent={5} color="error" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => handleNavigationClick('phone')}
-            sx={{ 
-              backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : 'transparent',
-              '&:hover': { backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : '#f0f0f0' }
-            }}
-          >
-            <ListItemIcon>
-              <PhoneIcon color={isActiveNavigation('phone') ? 'primary' : 'inherit'} />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Phone Call Request" 
-              primaryTypographyProps={{ 
-                fontWeight: isActiveNavigation('phone') ? 'bold' : 'normal'
-              }}
-            />
-            <Badge badgeContent={3} color="error" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => handleNavigationClick('incoming')}
-            sx={{ 
-              backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : 'transparent',
-              '&:hover': { backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : '#f0f0f0' }
-            }}
-          >
-            <ListItemIcon>
-              <CallIcon color={isActiveNavigation('incoming') ? 'primary' : 'inherit'} />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Incoming Calls" 
-              primaryTypographyProps={{ 
-                fontWeight: isActiveNavigation('incoming') ? 'bold' : 'normal'
-              }}
-            />
-            <Badge badgeContent={3} color="error" />
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton 
-            onClick={() => handleNavigationClick('active-call')}
-            sx={{ 
-              backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : 'transparent',
-              '&:hover': { backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : '#f0f0f0' }
-            }}
-          >
-            <ListItemIcon>
-              <ActiveIcon color={isActiveNavigation('active-call') ? 'primary' : 'inherit'} />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Active Call" 
-              primaryTypographyProps={{ 
-                fontWeight: isActiveNavigation('active-call') ? 'bold' : 'normal'
-              }}
-            />
-          </ListItemButton>
-        </ListItem>
-      </List>
-
-      {/* Footer with total unread count */}
-      <Box sx={{ p: 2, borderTop: '1px solid #e0e0e0', backgroundColor: '#e8eaf6' }}>
-        <Typography variant="body2" color="text.secondary" align="center">
-          Total unread messages: {getTotalUnreadCount()}
-        </Typography>
-      </Box>
     </Box>
   );
 }; 

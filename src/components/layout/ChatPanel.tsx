@@ -50,7 +50,7 @@ export const ChatPanel: React.FC = () => {
         payload: { chatId: state.selectedChatId, message: welcomeMessage } 
       });
     }
-  }, [state.selectedChatId, currentMessages.length, assistantUser, dispatch]);
+  }, [state.selectedChatId, assistantUser, dispatch]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !state.selectedChatId || !state.currentUser) return;

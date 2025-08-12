@@ -1,10 +1,13 @@
 // Common types for the chat application
 
+export type UserStatus = 'available' | 'busy' | 'away' | 'offline';
+
 export interface User {
   id: string;
   name: string;
   email: string;
   avatar?: string;
+  status?: UserStatus;
 }
 
 export interface Message {
