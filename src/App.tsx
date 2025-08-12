@@ -1,5 +1,7 @@
 import React from 'react';
-import { ThemeProvider, createTheme, CssBaseline, Container, Typography, Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { LoginPage, ChatPage } from './pages';
 
 const theme = createTheme();
 
@@ -7,16 +9,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="md">
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Chat Assistant
-          </Typography>
-          <Typography variant="body1">
-            Welcome to your chat assistant application.
-          </Typography>
-        </Box>
-      </Container>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 }
