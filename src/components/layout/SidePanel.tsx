@@ -20,10 +20,18 @@ import {
 import { useAppContext } from '../../context/AppContext';
 
 export const SidePanel: React.FC = () => {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
 
   const getTotalUnreadCount = () => {
     return state.chats.reduce((total, chat) => total + chat.unreadCount, 0);
+  };
+
+  const handleNavigationClick = (navigationType: string) => {
+    dispatch({ type: 'SET_ACTIVE_NAVIGATION', payload: navigationType });
+  };
+
+  const isActiveNavigation = (navigationType: string) => {
+    return state.activeNavigation === navigationType;
   };
 
   return (
@@ -63,56 +71,105 @@ export const SidePanel: React.FC = () => {
       {/* Navigation Menu */}
       <List sx={{ flex: 1, pt: 1 }}>
         <ListItem disablePadding>
-          <ListItemButton sx={{ 
-            backgroundColor: '#e3f2fd',
-            '&:hover': { backgroundColor: '#e3f2fd' }
-          }}>
+          <ListItemButton 
+            onClick={() => handleNavigationClick('ai-assistant')}
+            sx={{ 
+              backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : 'transparent',
+              '&:hover': { backgroundColor: isActiveNavigation('ai-assistant') ? '#e3f2fd' : '#f0f0f0' }
+            }}
+          >
             <ListItemIcon>
-              <RobotIcon color="primary" />
+              <RobotIcon color={isActiveNavigation('ai-assistant') ? 'primary' : 'inherit'} />
             </ListItemIcon>
             <ListItemText 
               primary="AI Virtual Assistant" 
-              primaryTypographyProps={{ fontWeight: 'bold' }}
+              primaryTypographyProps={{ 
+                fontWeight: isActiveNavigation('ai-assistant') ? 'bold' : 'normal'
+              }}
             />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton 
+            onClick={() => handleNavigationClick('whatsapp')}
+            sx={{ 
+              backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : 'transparent',
+              '&:hover': { backgroundColor: isActiveNavigation('whatsapp') ? '#e3f2fd' : '#f0f0f0' }
+            }}
+          >
             <ListItemIcon>
-              <ChatIcon />
+              <ChatIcon color={isActiveNavigation('whatsapp') ? 'primary' : 'inherit'} />
             </ListItemIcon>
-            <ListItemText primary="WhatsApp Chat Request" />
+            <ListItemText 
+              primary="WhatsApp Chat Request" 
+              primaryTypographyProps={{ 
+                fontWeight: isActiveNavigation('whatsapp') ? 'bold' : 'normal'
+              }}
+            />
             <Badge badgeContent={5} color="error" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton 
+            onClick={() => handleNavigationClick('phone')}
+            sx={{ 
+              backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : 'transparent',
+              '&:hover': { backgroundColor: isActiveNavigation('phone') ? '#e3f2fd' : '#f0f0f0' }
+            }}
+          >
             <ListItemIcon>
-              <PhoneIcon />
+              <PhoneIcon color={isActiveNavigation('phone') ? 'primary' : 'inherit'} />
             </ListItemIcon>
-            <ListItemText primary="Phone Call Request" />
+            <ListItemText 
+              primary="Phone Call Request" 
+              primaryTypographyProps={{ 
+                fontWeight: isActiveNavigation('phone') ? 'bold' : 'normal'
+              }}
+            />
             <Badge badgeContent={3} color="error" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton 
+            onClick={() => handleNavigationClick('incoming')}
+            sx={{ 
+              backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : 'transparent',
+              '&:hover': { backgroundColor: isActiveNavigation('incoming') ? '#e3f2fd' : '#f0f0f0' }
+            }}
+          >
             <ListItemIcon>
-              <CallIcon />
+              <CallIcon color={isActiveNavigation('incoming') ? 'primary' : 'inherit'} />
             </ListItemIcon>
-            <ListItemText primary="Incoming Calls" />
+            <ListItemText 
+              primary="Incoming Calls" 
+              primaryTypographyProps={{ 
+                fontWeight: isActiveNavigation('incoming') ? 'bold' : 'normal'
+              }}
+            />
             <Badge badgeContent={3} color="error" />
           </ListItemButton>
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton 
+            onClick={() => handleNavigationClick('active-call')}
+            sx={{ 
+              backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : 'transparent',
+              '&:hover': { backgroundColor: isActiveNavigation('active-call') ? '#e3f2fd' : '#f0f0f0' }
+            }}
+          >
             <ListItemIcon>
-              <ActiveIcon />
+              <ActiveIcon color={isActiveNavigation('active-call') ? 'primary' : 'inherit'} />
             </ListItemIcon>
-            <ListItemText primary="Active Call" />
+            <ListItemText 
+              primary="Active Call" 
+              primaryTypographyProps={{ 
+                fontWeight: isActiveNavigation('active-call') ? 'bold' : 'normal'
+              }}
+            />
           </ListItemButton>
         </ListItem>
       </List>

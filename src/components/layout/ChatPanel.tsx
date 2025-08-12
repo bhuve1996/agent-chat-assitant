@@ -17,6 +17,7 @@ import { MessageBubble } from '../molecules/MessageBubble';
 import { Message } from '../../types';
 import { generateId } from '../../utils';
 import { useAppContext } from '../../context/AppContext';
+import { WhatsAppRequests, PhoneRequests, IncomingCalls, ActiveCall } from '../content';
 
 export const ChatPanel: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
@@ -92,7 +93,56 @@ export const ChatPanel: React.FC = () => {
     }
   };
 
-  // Show placeholder if no chat is selected
+  // Render different content based on active navigation
+  const renderContent = () => {
+    switch (state.activeNavigation) {
+      case 'whatsapp':
+        return <WhatsAppRequests />;
+      case 'phone':
+        return <PhoneRequests />;
+      case 'incoming':
+        return <IncomingCalls />;
+      case 'active-call':
+        return <ActiveCall />;
+      case 'ai-assistant':
+      default:
+        // Show chat interface for AI Assistant
+        if (!state.selectedChatId || !selectedChat) {
+          return (
+            <Box sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column',
+              backgroundColor: '#fafafa',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Typography variant="h6" color="text.secondary">
+                Select a chat to start messaging
+              </Typography>
+            </Box>
+          );
+        }
+        return null; // Will render chat interface below
+    }
+  };
+
+  // If not AI Assistant, show the specific content
+  if (state.activeNavigation !== 'ai-assistant') {
+    return (
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        backgroundColor: '#fafafa',
+        overflow: 'auto'
+      }}>
+        {renderContent()}
+      </Box>
+    );
+  }
+
+  // Show placeholder if no chat is selected for AI Assistant
   if (!state.selectedChatId || !selectedChat) {
     return (
       <Box sx={{ 
@@ -110,6 +160,7 @@ export const ChatPanel: React.FC = () => {
     );
   }
 
+  // Chat interface for AI Assistant
   return (
     <Box sx={{ 
       flex: 1, 

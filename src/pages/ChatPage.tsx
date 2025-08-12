@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   Container, 
   Box, 
@@ -7,8 +7,7 @@ import {
   TextField, 
   IconButton,
   AppBar,
-  Toolbar,
-  Grid
+  Toolbar
 } from '@mui/material';
 import { Send as SendIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -23,12 +22,12 @@ export const ChatPage: React.FC = () => {
   const [user] = useLocalStorage<User | null>('user', null);
   const navigate = useNavigate();
 
-  // Mock assistant user
-  const assistantUser: User = {
+  // Mock assistant user - memoized to fix useEffect dependency warning
+  const assistantUser = useMemo(() => ({
     id: 'assistant',
     name: 'AI Assistant',
     email: 'assistant@chat.com',
-  };
+  }), []);
 
   const addWelcomeMessage = useCallback(() => {
     const welcomeMessage: Message = {
